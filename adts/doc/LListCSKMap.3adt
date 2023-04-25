@@ -1,0 +1,133 @@
+.\" Process this file with
+.\" groff -man -Tascii LListCSKMap.3adt
+.\"
+.TH LListCSKMap 3adt "August 2021" "University of Oregon" ADTs
+.SH NAME
+C String Key LListMap ADT man page
+.SH SYNOPSIS
+#include "ADTs/llistcskmap.h"
+.sp
+const CSKMap *m = LListCSKMap(void (*freeValue(void *v));
+.sp
+const CSKMap *CSKMap_create(void (*freeValue)(void *v));
+.sp
+const CSKMap *m->create(m);
+.sp
+void m->destroy(m);
+.sp
+void m->clear(m);
+.sp
+bool m->containsKey(m, char *key);
+.sp
+bool m->get(m, char *key, void **value);
+.sp
+bool m->put(m, char *key, void *value);
+.sp
+bool m->putUnique(m, char *key, void *value);
+.sp
+bool m->remove(m, char *key);
+.sp
+bool m->isEmpty(m);
+.sp
+long m->size(m);
+.sp
+char **m->keyArray(m, long *len);
+.sp
+MEntry **m->entryArray(m, long *len);
+.sp
+const Iterator *m->itCreate(m);
+.SH DESCRIPTION
+LListCSKMap() creates a linked list map in which the keys are C strings.
+`freeValue' is a function pointer that will be called by
+destroy(), clear(), remove(), and put() on each relevant entry/entries in the
+map. If you are storing basic data types in the CSKMap, you should
+specify `doNothing'; if you are storing pointers to heap-allocated values
+created using `malloc()' or `strdup()', you should specify free; if the values
+you are storing have more complicated relationships to the heap, you should
+specify the name of a function you have created to return the heap allocations
+associated with a value in the CSKMap.
+The implementations of put() and putUnique() make copies of `key' for storage
+in the linked list.
+The return value is a pointer to the CSKMap dispatch table, or NULL if there
+are malloc errors.
+.sp
+CSKMap_create() creates a linked list map in which the keys are C strings.
+`freeValue' is as for the `LListCSKMap()' constructor described above.
+The implementations of put() and putUnique() make copies of `key' for storage
+in the linked list.
+The return value is a pointer to the CSKMap dispatch table, or NULL if there
+are malloc errors.
+.sp
+The create() method creates a new map using the same implementation and
+`freeValue' pointer as the
+map upon which the method has been invoked;
+returns NULL if error creating the new map.
+.sp
+The destroy() method destroys the map.
+It applies the constructor-specified freeValue() to each element
+in the map before returning heap storage associated with the
+CSKMap instance to the heap.
+.sp
+The clear() method clears all elements from the map.
+It applies the constructor-specified freeValue() to each element
+in the map.
+Upon return, the map is empty.
+.sp
+The containsKey() method returns true if `key' is contained in the map, false
+if not.
+.sp
+The get() method returns the value associated with `key' in `*value'.
+The method return value is true if `key' is in the map, false if not.
+.sp
+The put() method puts (`key',`value') into the map;
+applies constructor-specified freeValue() if there was a previous
+entry associated with `key'.
+The method return value is true if successful, false if not.
+.sp
+The putUnique() method puts (`key',`value') into the map if and only if the map
+does not already have an entry associated with `key'.
+The method return value is true if successful, false if not.
+.sp
+The remove() method removes (`key',`value') from the map;
+applies constructor-specified freeValue() to the removed entry.
+The method return value is true if present and removed, false if not present.
+.sp
+The isEmpty() method returns true if the array list is empty, false if not.
+.sp
+The size() method returns the number of elements in the array list.
+.sp
+The keyArray() method returns a heap-allocated array containing the
+keys in the map; the order of the keys in the array is arbitrary;
+it returns the number of elements in the array
+in `*len'.
+The method return value is a pointer to an array of char * elements, or NULL
+if malloc failure OR IF THE MAP IS EMPTY.
+.br
+N.B. The caller is responsible for freeing the array of char * elements when
+finished with it.
+.sp
+The entryArray() method returns a heap-allocated array containing the
+(key,value) entries in the map; the order of the entries in the array is
+arbitrary;
+it returns the number of entries in the array in `*len'.
+The method return value is a pointer to an array of MEntry * elements, or NULL
+if malloc failure OR IF THE MAP IS EMPTY.
+.br
+N.B. The caller is responsible for freeing the array of MEntry * elements when
+finished with it.
+.sp
+The itCreate() method creates an Iterator to the entries in the map.
+The order in which the entries are returned by Iterator.next() is arbitrary.
+The method return value is a pointer to the Iterator so created, or NULL
+if malloc failure OR IF THE MAP IS EMPTY.
+.br
+N.B. The caller is responsible for destroying the iterator when finished with
+it.
+.SH FILES
+/usr/local/include/ADTs/llistcskmap.h, /usr/local/include/ADTs/cskmap.h
+.br
+/usr/local/lib/libADTs.a
+.SH AUTHOR
+Joe Sventek <jsventek@gmail.com>
+.SH "SEE ALSO"
+Intro(3adt), CSKMap(3adt), Map(3adt), HashCSKMap(3adt), HashMap(3adt), LListMap(3adt), Iterator(3adt)

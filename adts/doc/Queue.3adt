@@ -1,0 +1,98 @@
+.\" Process this file with
+.\" groff -man -Tascii Queue.3adt
+.\"
+.TH Queue 3adt "August 2021" "University of Oregon" ADTs
+.SH NAME
+Queue ADT man page
+.SH SYNOPSIS
+#include "ADTs/queue.h"
+.sp
+const Queue *q = Queue_create(void (*freeValue)(void *e));
+.sp
+const Queue *q->create(q);
+.sp
+void q->destroy(q);
+.sp
+void q->clear(q);
+.sp
+bool q->enqueue(q, void *element);
+.sp
+bool q->dequeue(q, void **element);
+.sp
+bool q->front(q, void **element);
+.sp
+bool q->isEmpty(q);
+.sp
+long q->size(q);
+.sp
+void **q->toArray(q, long *len);
+.sp
+const Iterator *q->itCreate(q);
+.SH DESCRIPTION
+Queue_create() creates a queue;
+`freeValue' is a function pointer that will be called by
+destroy() and clear() on each entry in the queue.
+If you are storing basic data types in the Queue, you should
+specify `doNothing'; if you are storing pointers to heap-allocated values
+created using `malloc()' or `strdup()', you should specify free; if the values
+you are storing have more complicated relationships to the heap, you should
+specify the name of a function you have created to return the heap allocations
+associated with a value in the Queue.
+Returns a pointer to the dispatch table, or NULL if there are malloc() errors.
+.sp
+The create() method creates a new queue using the same implementation
+and `freeValue' function pointer as
+`q'; returns NULL if error creating the new queue.
+.sp
+The destroy() method destroys the queue.
+It applies the constructor-specified freeValue() to each element
+in the queue before returning heap storage associated with the
+Queue instance to the heap.
+.sp
+The clear() method clears all elements from the queue.
+It applies the constructor-specified freeValue() to each element
+in the queue.
+Upon return, the queue is empty.
+.sp
+The enqueue() method enqueues `element' onto the tail of the queue;
+if no more room in the
+queue, it is dynamically resized.
+The method return value is true/1 if successful, false/0 if malloc() error.
+.sp
+The dequeue() method dequeues the element at the head of the queue into
+.br
+`*element'.
+The method return value is true/1 if successful, false/0 if the queue was empty.
+.sp
+The front() method copies the element at the head of the queue into `*element'
+without removing the element from the queue.
+The method return value is true/1 if successful, false/0 if the queue was empty.
+.sp
+The isEmpty() method returns true/1 if the queue is empty, false/0 if not.
+.sp
+The size() method returns the number of elements in the queue.
+.sp
+The toArray() method returns a heap-allocated array containing the
+elements in the queue in the order head to tail;
+it returns the number of elements in the array in `*len'.
+The method return value is a pointer to an array of void * elements, or NULL
+if malloc failure OR IF THE QUEUE IS EMPTY.
+.br
+N.B. The caller is responsible for freeing the array of void * elements when
+finished with it.
+.sp
+The itCreate() method creates an Iterator to the contents of the queue.
+The iterator returns the queue elements in the order head to tail.
+The method return value is a pointer to the Iterator so created, or NULL
+if malloc failure OR IF THE QUEUE IS EMPTY.
+.br
+N.B. The caller is responsible for destroying the iterator when finished with
+it.
+.SH FILES
+/usr/local/include/ADTs/queue.h
+.br
+/usr/local/lib/libADTs.a
+.SH AUTHOR
+Joe Sventek <jsventek@gmail.com>
+.SH "SEE ALSO"
+Intro(3adt), ArrayQueue(3adt), LListQueue(3adt), Iterator(3adt)

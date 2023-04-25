@@ -1,0 +1,147 @@
+.\" Process this file with
+.\" groff -man -Tascii HashMap.3adt
+.\"
+.TH HashMap 3adt "August 2021" "University of Oregon" ADTs
+.SH NAME
+HashMap ADT man page
+.SH SYNOPSIS
+#include "ADTs/hashmap.h"
+.sp
+const Map *m = HashMap(long capacity, double loadFactor,
+.br
+                       long (*hash)(void *, long), int (*cmp)(void*, void*),
+.br
+                       void (*freeK)(void *k), void (*freeV(void *v)));
+.sp
+const Map *m->create(m);
+.sp
+void m->destroy(m);
+.sp
+void m->clear(m);
+.sp
+bool m->containsKey(m, void *key);
+.sp
+bool m->get(m, void *key, void **value);
+.sp
+bool m->put(m, void *key, void *value);
+.sp
+bool m->putUnique(m, void *key, void *value);
+.sp
+bool m->remove(m, void *key);
+.sp
+bool m->isEmpty(m);
+.sp
+long m->size(m);
+.sp
+void **m->keyArray(m, long *len);
+.sp
+MEntry **m->entryArray(m, long *len);
+.sp
+const Iterator *m->itCreate(m);
+.SH DESCRIPTION
+HashMap() creates a hashmap;
+.IP \(bu 3
+`capacity' is the initial number of hash buckets; if it is 0L, a default value
+is used;
+.IP \(bu 3
+`loadFactor' is the target load factor for the hash table; the number of
+buckets is doubled whenever the current load factor of the table exceeds the
+target;
+.IP \(bu 3
+`hash' is a function pointer to compute a bucket
+index from a key;
+.IP \(bu 3
+`cmp' is a function pointer that returns a value <0 | 0 | >0
+when comparing a pair of keys;
+.IP \(bu 3
+`freeK' is a function pointer that will be called by destroy(),
+clear(), put(), and remove() on keys of relevant entry/entries in the map; and
+.IP \(bu 3
+`freeV' is a function pointer that will be called by destroy(),
+clear(), put(), and remove() on values of relevant entry/entries in the map.
+.RE
+Note that if your keys are basic data types, then you should specify
+`doNothing' for `freeK'; if your values are basic data types, then you should
+specify `doNothing' for `freeV'.
+If your keys or values are storing pointers to heap-allocated values
+created using `malloc()' or `strdup()', you should specify free; if your
+keys or values have more complicated relationships to the heap, you should
+specify the name of a function you have created to return the heap allocations
+associated with a key or value in the Map.
+.sp
+The return value is a pointer to the Map dispatch table, or NULL if there
+are malloc errors.
+.sp
+The create() method creates a new map using the same implementation, `freeK',
+and `freeV' pointers as the
+map upon which the method has been invoked;
+returns NULL if error creating the new map.
+.sp
+The destroy() method destroys the map.
+It applies the constructor-specified freeK() and freeV() to each element
+in the map before returning heap storage associated with the
+Map instance to the heap.
+.sp
+The clear() method clears all elements from the map.
+It applies the constructor-specified freeK() and freeV() to each element
+in the map.
+Upon return, the map is empty.
+.sp
+The containsKey() method returns true if `key' is contained in the map, false
+if not.
+.sp
+The get() method returns the value associated with `key' in `*value'.
+The method return value is true if `key' is in the map, false if not.
+.sp
+The put() method puts (`key',`value') into the map;
+applies constructor-specified freeK() and freeV() if there was a previous
+entry associated with `key'.
+The method return value is true if successful, false if not.
+.sp
+The putUnique() method puts (`key',`value') into the map if and only if the map
+does not already have an entry associated with `key'.
+The method return value is true if successful, false if not.
+.sp
+The remove() method removes (`key',`value') from the map;
+applies constructor-specified freeK() and freeV() to the removed entry.
+The method return value is true if present and removed, false if not present.
+.sp
+The isEmpty() method returns 1 if the array list is empty, 0 if not.
+.sp
+The size() method returns the number of elements in the array list.
+.sp
+The keyArray() method returns a heap-allocated array containing the
+keys in the map; the order of the keys in the array is arbitrary;
+it returns the number of elements in the array
+in `*len'.
+The method return value is a pointer to an array of void * elements, or NULL
+if malloc failure OR IF THE MAP IS EMPTY.
+.br
+N.B. The caller is responsible for freeing the array of void * elements when
+finished with it.
+.sp
+The entryArray() method returns a heap-allocated array containing the
+(key,value) entries in the map; the order of the entries in the array is
+arbitrary;
+it returns the number of entries in the array in `*len'.
+The method return value is a pointer to an array of MEntry * elements, or NULL
+if malloc failure OR IF THE MAP IS EMPTY.
+.br
+N.B. The caller is responsible for freeing the array of MEntry * elements when
+finished with it.
+.sp
+The itCreate() method creates an Iterator to the entries in the map.
+The order in which the entries are returned by Iterator.next() is arbitrary.
+The method return value is a pointer to the Iterator so created, or NULL
+if malloc failure OR IF THE MAP IS EMPTY.
+.br
+N.B. The caller is responsible for destroying the iterator when finished with
+it.
+.SH FILES
+/usr/local/include/ADTs/hashmap.h, /usr/local/include/ADTs/map.h
+.br
+/usr/local/lib/libADTs.a
+.SH AUTHOR
+Joe Sventek <jsventek@gmail.com>
+.SH "SEE ALSO"
+Intro(3adt), Map(3adt), LListMap(3adt), Iterator(3adt)

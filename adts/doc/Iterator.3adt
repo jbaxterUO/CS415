@@ -1,0 +1,49 @@
+.\" Process this file with
+.\" groff -man -Tascii Iterator.3adt
+.\"
+.TH Iterator 3adt "August 2021" "University of Oregon" ADTs
+.SH NAME
+Iterator ADT man page
+.SH SYNOPSIS
+#include "ADTs/iterator.h"
+.sp
+const Iterator *it = Iterator_create(long size, void **elements);
+.sp
+bool it->hasNext(it);
+.sp
+bool it->next(it, void **element);
+.sp
+void it->destroy(it);
+.SH DESCRIPTION
+Iterator_create() constructs an iterator from the array of void *
+.br
+elements,
+returning a pointer to the dispatch table; if there are any problems in
+constructing the iterator, NULL is returned.
+The array of void * elements is assumed to have been allocated on the heap.
+.sp
+The destroy() method destroys the iterator. It returns the array of void *
+elements to the heap, as well as any structures that the constructor allocated
+from the heap.
+.sp
+The hasNext() method returns true/1 if there are remaining elements in the
+iterator; it returns false/0 if there are no more remaining elements.
+.sp
+The next() method returns the next void * element in the array in
+.br
+*element.
+The function value is true/1 if there was a next element, false/0 if not.
+.SH "SPECIAL CONSIDERATIONS"
+It is highly unusual for a programmer to directly invoke
+.br
+Iterator_create();
+a programmer usually obtains an Iterator using the itCreate() factory method
+on an instance of a container ADT.
+.SH FILES
+/usr/local/include/ADTs/iterator.h
+.br
+/usr/local/lib/libADTs.a
+.SH AUTHOR
+Joe Sventek <jsventek@gmail.com>
+.SH "SEE ALSO"
+Intro(3adt)

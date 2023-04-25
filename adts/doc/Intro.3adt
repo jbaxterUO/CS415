@@ -1,0 +1,215 @@
+.\" Process this file with
+.\" groff -man -Tascii Intro.3adt
+.\"
+.TH Intro 3adt "June 2021" "University of Oregon" ADTs
+.SH NAME
+Introduction to the Oregon ADT Library
+.SH DESCRIPTION
+When constructing sophisticated applications, one often needs to use well-known
+abstract data types (ADTs).
+If one is using the Java programming language, the Java collection
+classes provide a rich set of such data type implementations.
+C++ has the Standard Template Library, along with many other contributed
+template libraries.
+When programming in C, one often reinvents just enough of a required ADT
+to get the job done.
+.sp
+Through the judicious use of the void * type, C provides the ability to create
+generic abstract data types, similar to the way Java collection classes were
+done before the incorporation of generics.
+The Oregon ADT library is a set of abstract data types that have
+proved generally useful.
+Each such ADT is patterned after a corresponding Java collection
+class and is a complete implementation.
+Each ADT provides an iterator factory method; each such iterator can then be
+used to linearly progress through the ADT elements in a standard way.
+.sp
+An ADT instance is referred to using a const pointer to a dispatch table,
+an example of which is portrayed in the following diagram:
+.sp
++----------------------------------------------------+
+.br
+| void *self                                         | instance data
+.br
++----------------------------------------------------+
+.br
+| ret-type1 (*method1)(const ADT *adt, m1-arguments) | 1st method
+.br
++----------------------------------------------------+
+.br
+| ret-type2 (*method2)(const ADT *adt, m2-arguments) | 2nd method
+.br
++----------------------------------------------------+
+.br
+| ret-type3 (*method3)(const ADT *adt, m3-arguments) | 3rd method
+.br
++----------------------------------------------------+
+.br
+| * * *                                              |
+.br
++----------------------------------------------------+
+.br
+| ret-typeN (*methodN)(const ADT *adt, mN-arguments) | Nth method
+.br
++----------------------------------------------------+
+.br
+| const Iterator *(*itCreate)(const ADT *adt)        | factory method
+.br
++----------------------------------------------------+
+.sp
+Each ADT also provides one or more constructors, or class methods, for creating
+an instance of the ADT.
+A constructor which is independent of the implementation will have a
+signature of the form:
+.sp
+.ce 1
+const ADT *ADT_create(constructor-arguments);
+.sp
+If two or more implementations of an ADT are supported, there will also be an
+implementation-specific constructor of the form:
+.sp
+.ce 1
+const ADT *ImplADT(constructor-arguments);
+.sp
+where `Impl' is replaced by `Array', `LList', `Hash', or `Heap'.
+.sp
+If one uses the implementation-independent form of the constructor, the linker
+will include the first implementation it finds in the library; if the
+complexity is different for different implementations, one must use the
+implementation-specific constructor in order to obtain the desired complexity.
+.SH CONTAINERS AND HEAP MEMORY
+All container ADTs can be used with basic data types and heap-allocated storage.
+The basic data types must occupy the same number of bytes of memory as a pointer
+(i.e., sizeof(type) == sizeof(void *)). As a result, if one wishes to store
+basic data types that occupy fewer bytes of memory, one must cast values to
+a larger type (all ints to longs, float to double) to avoid alignment problems
+with automatic variables.
+.sp
+Constructors for container ADTs all require a function pointer argument
+satisfying the following signature:
+.br
+.ce 1
+ void (*freeValue)(void *x);
+.sp
+If one is storing a basic data type, one should specify `doNothing' as this
+function pointer; if one is storing a pointer to heap-allocated memory obtained
+directly from malloc(), calloc(), realloc(), or strdup(),
+one should specify `free'.
+If the storage has more complicated relationships with the heap, one should
+specify the name of a function that the user has written that satisfies the
+`freeValue' signature that casts the `x' argument to the correct type and then
+frees heap storage associated with the element.
+.sp
+The container ADTs abide by a strict notion of responsibility transfer for
+heap storage. A mutator method that inserts an element into the container
+(e.g., Stack.push())
+transfers responsibility for that heap storage to the container; if the
+insertion requires that a previously inserted element be replaced, the
+container will apply the `freeValue' function to that element before
+replacing it. A non-destructive read method (e.g., Stack.peek())
+leaves responsibility for the element read with the container; a destructive
+read method (e.g., Stack.pop()), on the other hand, causes responsibility for
+any heap storage associated with the element to transfer back to the code that
+invoked the destructive read method.
+While the container is responsible, any method that causes the container to
+remove an element without returning responsibility to the caller will invoke
+the `freeValue' function on that element.
+.sp
+Some ADTs require that the user provide two generic arguments on insertion
+(e.g., PrioQueue, Map); the constructors for these ADTs require that the caller
+provide two free function pointers, one for the values stored, the other for the
+second type of input (priority for PrioQueue, key for Map). For each of these
+function pointers, if the value provided is a basic data type, `doNothing'
+should be specified.
+.SH "USING AN ADT FROM THE LIBRARY"
+Let's suppose that you are writing a program that wishes to use an instance of
+the Stack ADT.
+Two implementations are provided in the library, an ArrayStack and a LListStack.
+Both of these implementations are unbounded and provide O(1) asymptotic
+complexity for the push(), pop(), and peek() methods.
+Thus, we will use the implementation-independent form of the constructor.
+.sp
+Your code will need to include the following file:
+.sp
+.in +5
+#include "ADTs/stack.h"
+.in
+.sp
+To create a Stack instance, you will perform a call of the form:
+.sp
+.in +5
+const Stack *st = Stack_create(void (*freeValue)(void *v));
+.in
+.sp
+where `freeValue' is a pointer to a function that will be applied by the
+implementation to each value in the Stack when the stack is being destroyed
+or cleared; if `doNothing' is specified as the constructor argument, then
+nothing is done to each value in the Stack during destruction or clearing.
+.sp
+To destroy the Stack instance, an invocation of the following form is needed:
+.sp
+.in +5
+st->destroy(st);
+.in
+.sp
+The signatures for the three standard operations for a Stack are:
+.sp
+.in +5
+bool (*push)(const Stack *st, void *value);
+.br
+bool (*peek)(const Stack *st, void **address);
+.br
+bool (*pop)(const Stack *st, void **address);
+.in
+.sp
+Each of the methods return true/false if they were successful in performing
+their tasks; for read methods, the value at the top of the stack is stored into
+the variable at the address supplied as the 2nd argument.
+.sp
+To support students as they are coming to grips with the meanings of pointers,
+two macros are defined for their use; they are demonstrated in the
+following invocations:
+.sp
+.in +5
+st->push(st, ADT_VALUE(variable));
+.br
+st->peek(st, ADT_ADDRESS(&variable));
+.br
+st->pop(st, ADT_ADDRESS(&variable));
+.in
+.sp
+A 3rd macro, ADT_ADDRESS_CHECK(&variable)), is available to enable students to
+check that a basic data type is the correct size; it generates an assert
+statement in the program which will fail if they are attempting to use a
+basic data type whose size is != sizeof(void *).
+.sp
+The following Makefile shows how to compile stackprog.c and link it with the
+ADT library:
+.sp
+.nf
+.in +5
+CFLAGS=-W -Wall -I/usr/local/include
+LDFLAGS=-L/usr/local/lib
+LIBRARIES=-lADTs
+
+stackprog: stackprog.o
+	gcc $(LDFLAGS) -o stackprog stackprog.o $(LIBRARIES)
+
+stackprog.o: stackprog.c
+.fi
+.in
+.SH FILES
+/usr/local/include/ADTs/*.h
+.br
+/usr/local/lib/libADTs.a
+.SH AUTHOR
+Joe Sventek <jsventek@gmail.com>
+.SH "SEE ALSO"
+ArrayDeque(3adt), ArrayList(3adt), ArrayQueue(3adt), ArrayStack(3adt),
+CSKMap(3adt),
+Deque(3adt), HashMap(3adt),
+HeapPrioQueue(3adt), Iterator(3adt), LListDeque(3adt),
+LListMap(3adt),
+LListPrioQueue(3adt), LListQueue(3adt), LListStack(3adt),
+Map(3adt), PrioQueue(3adt),
+Queue(3adt), Stack(3adt), String(3adt)

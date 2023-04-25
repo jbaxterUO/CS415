@@ -1,0 +1,111 @@
+.\" Process this file with
+.\" groff -man -Tascii ArrayStack.3adt
+.\"
+.TH ArrayStack 3adt "August 2021" "University of Oregon" ADTs
+.SH NAME
+ArrayStack ADT man page
+.SH SYNOPSIS
+#include "ADTs/arraystack.h"
+.sp
+const Stack *st = ArrayStack(long capacity,
+.br
+                             void (*freeValue)(void *e));
+.sp
+const Stack *st = Stack_create(void (*freeValue)(void *e));
+.sp
+const Stack *st->create(st);
+.sp
+void st->destroy(st);
+.sp
+void st->clear(st);
+.sp
+bool st->push(st, void *element);
+.sp
+bool st->pop(st, void **element);
+.sp
+bool st->peek(st, void **element);
+.sp
+bool st->isEmpty(st);
+.sp
+long st->size(st);
+.sp
+void **st->toArray(st, long *len);
+.sp
+const Iterator *st->itCreate(st);
+.SH DESCRIPTION
+ArrayStack() creates an array-based stack with the specified
+.br
+`capacity';
+if `capacity' == 0L, a default initial capacity (50 elements) is used.
+If the push() method is invoked when the array is full, the array is
+dynamically resized.
+`freeValue' is a function pointer that will be called by
+destroy() and clear() on each entry in the stack.
+If you are storing basic data types in the ArrayStack, you should
+specify `doNothing'; if you are storing pointers to heap-allocated values
+created using `malloc()' or `strdup()', you should specify free; if the values
+you are storing have more complicated relationships to the heap, you should
+specify the name of a function you have created to return the heap allocations
+associated with a value in the ArrayStack.
+Returns a pointer to the dispatch table, or NULL if there are malloc() errors.
+.sp
+Stack_create() creates a stack;
+`freeValue' is as for the ArrayStack() constructor described above.
+Returns a pointer to the dispatch table, or NULL if there are malloc() errors.
+.sp
+The create() method creates a new stack using the same implementation and
+`freeValue' pointer as
+`st'; returns NULL if error creating the new stack.
+.sp
+The destroy() method destroys the stack.
+It applies the constructor-specified freeValue() to each element
+in the stack before returning heap storage associated with the
+Stack instance to the heap.
+.sp
+The clear() method clears all elements from the stack.
+It applies the constructor-specified freeValue() to each element
+in the stack.
+Upon return, the stack is empty.
+.sp
+The push() method pushes `element' onto the stack; if no more room in the
+stack, it is dynamically resized.
+The method return value is true if successful, false if malloc() error.
+.sp
+The pop() method pops the element at the top of the stack into
+.br
+`*element'.
+The method return value is true if successful, false if the stack was empty.
+.sp
+The peek() method copies the element at the top of the stack into `*element'
+without removing the element from the stack.
+The method return value is true if successful, false if the stack was empty.
+.sp
+The isEmpty() method returns true if the stack is empty, 0 if not.
+.sp
+The size() method returns the number of elements in the stack.
+.sp
+The toArray() method returns a heap-allocated array containing the
+elements in the stack in the order top to bottom;
+it returns the number of elements in the array in `*len'.
+The method return value is a pointer to an array of void * elements, or NULL
+if malloc failure OR IF THE STACK IS EMPTY.
+.br
+N.B. The caller is responsible for freeing the array of void * elements when
+finished with it.
+.sp
+The itCreate() method creates an Iterator to the contents of the stack.
+The iterator returns the stack elements in the order top to bottom.
+The method return value is a pointer to the Iterator so created, or NULL
+if malloc failure OR IF THE STACK IS EMPTY.
+.br
+N.B. The caller is responsible for destroying the iterator when finished with
+it.
+.SH FILES
+/usr/local/include/ADTs/arraystack.h, /usr/local/include/ADTs/stack.h
+.br
+/usr/local/lib/libADTs.a
+.SH AUTHOR
+Joe Sventek <jsventek@gmail.com>
+.SH "SEE ALSO"
+Intro(3adt), Stack(3adt), LListStack(3adt), Iterator(3adt)
+

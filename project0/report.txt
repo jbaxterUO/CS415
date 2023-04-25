@@ -1,0 +1,10 @@
+DuckID: jbaxter
+Duck#: 951927077
+
+I did not get any assistance from classmates. However, I referenced the reading in the assignment file for several things as this is the first time I have ever worked with generics in C.
+
+Implementation: Hash table
+
+State of solution: Each of the tests in longtest and stringtest passed for me with no leaks when I ran them through valgrind. I also wrote my own test checking to see if the hashmap can expand properly. The test that used long values passed with no leaks. However, I got a leak in my string version that I was not able to figure out.
+
+I am really grateful to have had this assignment as it made me much more appreciative of implementing generics in other languages. I also learned a lot about C. 

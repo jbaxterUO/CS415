@@ -1,0 +1,220 @@
+.\" Process this file with
+.\" groff -man -Tascii String.3adt
+.\"
+.TH String 3adt "August 2021" "University of Oregon" ADTs
+.SH NAME
+String ADT man page
+.SH SYNOPSIS
+#include "ADTs/StringADT.h"
+.sp
+const String *st = String_create(char *str);
+.sp
+const String *st->copy(st);
+.sp
+const String *st->slice(st, int begin, int end);
+.sp
+void st->destroy(st);
+.sp
+void st->clear(st);
+.sp
+bool st->append(st, char *suffix);
+.sp
+bool st->assign(st, int chr, int index);
+.sp
+bool st->insert(st, char *substr, int index);
+.sp
+void st->lower(st);
+.sp
+void st->lStrip(st);
+.sp
+bool st->remove(st, int index);
+.sp
+bool st->replace(st, char *old, char *new);
+.sp
+void st->rStrip(st);
+.sp
+void st->strip(st);
+.sp
+void st->translate(st, char *class, int chr);
+.sp
+void st->upper(st);
+.sp
+int st->compare(st, const String *other);
+.sp
+bool st->contains(st, char *substr);
+.sp
+bool st->endsWith(st, char *suffix, int begin, int end);
+.sp
+bool st->get(st, int index, int *chr);
+.sp
+int st->index(st, char *substr, int begin, int end);
+.sp
+bool st->isAlpha(st);
+.sp
+bool st->isDigit(st);
+.sp
+bool st->isLower(st);
+.sp
+bool st->isSpace(st);
+.sp
+bool st->isUpper(st);
+.sp
+int st->len(st)
+.sp
+int st->rindex(st, char *substr, int begin, int end);
+.sp
+const ArrayList st->split(st, char *sep);
+.sp
+bool st->startsWith(st, char *prefix, int begin, int end);
+.sp
+char *st->convert(st);
+.SH DESCRIPTION
+String_create() creates a String from the supplied C string argument.
+Returns a pointer to the dispatch table, or NULL if there are malloc() errors.
+.sp
+The copy() method creates a new String which is a copy of the String upon which
+the method was invoked.
+Returns a pointer to the new dispatch table, or NULL if there were malloc()
+errors.
+.sp
+The slice() method creates a new String which is a copy of a slice of the
+String upon which the method was invoked.
+If `end' == 0, the last index of the slice is st->len(st).
+If `begin' or `end' are illegal, NULL is returned; otherwise, a pointer to the
+new dispatch table is returned, or NULL if there were malloc() errors.
+.sp
+The destroy() method destroys the String, returning all heap-allocated memory.
+.sp
+The clear() method clears all characters from the String; it is equivalent
+to String_create("") without creating a new dispatch table.
+.sp
+The append() method appends `suffix' to the String; if no more room in the
+String, it is dynamically resized.
+The method return value is true/1 if successful, false/0 if malloc() error.
+.sp
+The assign() method replaces the character at `index' with `chr'.
+The method return value is true/1 if successful, false/0 if unoccupied index.
+.sp
+The insert() method inserts the characters of `substr' before the specified
+`index' into the String;
+all elements from that index onward are shifted one position to the right.
+If no more room in the String, it is dynamically resized.
+If the current size of the String is N, legal index values are in the interval
+[0, N].
+The method return value is true/1 if successful, false/0 if unsuccessful (illegal index
+or malloc() error).
+.sp
+The lower() method converts all uppercase characters in the String to
+lowercase.
+.sp
+The lStrip() method removes all leading whitespace in the String.
+.sp
+The remove() method removes the character at `index' from the String;
+all characters from [index+1, size-1] are shifted one position left.
+The method return value is true/1 if successful, false/0 if unoccupied index.
+.sp
+The replace() method replaces all occurences of `old' in the string with
+`new'.
+The method return value is true/1 if successful, false/0 if malloc() error.
+.sp
+The rStrip() method removes all trailing whitespace from the String.
+.sp
+The strip() method removes all leading and trailing whitespace from the String.
+.sp
+The translate() method replaces all characters in the String that are in
+the equivalence class `class' by `chr'.
+The equivalences classes and their meanings are as follows:
+.br
+"[:alnum:]"  all letters and digits
+.br
+"[:alpha:]"  all letters
+.br
+"[:blank:]"  all horizontal white space characters
+.br
+"[:cntrl:]"  all control characters
+.br
+"[:digit:]"  all digits
+.br
+"[:graph:]"  all printable characters, not including space
+.br
+"[:lower:]"  all lower case characters
+.br
+"[:print:]"  all printable characters, including space
+.br
+"[:punct:]"  all punctuation characters
+.br
+"[:space:]"  all horizontal and vertical whilte space characters
+.br
+"[:upper:]"  all upper case characters
+.br
+"[:xdigit:]" all hexadecimal digits
+.sp
+The upper() method converts all lowercase characters to uppercase.
+.sp
+The compare() method compares this String with `other' , returning <0 | 0 | >0
+if it is < other | == other | > other, respectively.
+.sp
+The contains() method returns true/1 if `substr' is contained in the String,
+false/0 if not.
+.sp
+The endsWith() method returns true/1 if the slice defined by [`begin':`end'] ends
+with `suffix'.
+If `end' == 0, the last index of the slice is the length of the String.
+Returns false/0 if it does not.
+.sp
+The get() method returns the character at the specified `index' in
+.br
+`*chr'.
+The method return value is true/1 if successful, false/0 if unoccupied index.
+.sp
+The index() method returns the index within the slice defined by
+[`begin':`end'] that matches `substr'; if `end' == 0, the last index of the
+slice is the length of the String.
+Returns -1 if there is no match.
+.sp
+The isAlpha() method returns true/1 if the String has at least 1 character and
+all characters are alphanumeric; returns false/0 otherwise.
+.sp
+The isDigit() method returns true/1 if the String has at least 1 character and
+all characters are digits; returns false/0 otherwise.
+.sp
+The isLower() method returns true/1 if the String has at least 1 character and
+all characters are lower case; returns false/0 otherwise.
+.sp
+The isSpace() method returns true/1 if the String has at least 1 character and
+all characters are whitespace; returns false/0 otherwise.
+.sp
+The isUpper() method returns true/1 if the String has at least 1 character and
+all characters are upper case; returns false/0 otherwise.
+.sp
+The len() method returns the length of the String.
+.sp
+The rindex() method is the same as index(), but searches backward through the
+specified slice.
+.sp
+The split() method splits the string into a list of C strings, returned in
+an ArrayList.
+The `sep' argument is a C string with the characters used to split the String;
+if it is "", runs of 1 or more white space characters separate words; if
+it is not "", then the exact sequence of characters is used to
+separate words.
+If there are no words in the String, NULL is returned.
+.br
+N.B. The caller is responsible for invoking the destroy() method on the
+ArrayList after use.
+.sp
+The startsWith() method returns true/1 if the slice defined by [`begin':`end']
+starts with `prefix'; it returns false/0 if not.
+If `end' == 0, the last index of the slice is the length of the String.
+.sp
+The convert() method returns a char * pointer to the contents of the String.
+N.B. The caller is responsible for destroying the iterator when finished with
+it.
+.SH FILES
+/usr/local/include/ADTs/stringADT.h
+.br
+/usr/local/lib/libADTs.a
+.SH AUTHOR
+Joe Sventek <jsventek@gmail.com>
+.SH "SEE ALSO"
+Intro(3adt), ArrayList(3adt)

@@ -1,0 +1,118 @@
+.\" Process this file with
+.\" groff -man -Tascii Map.3adt
+.\"
+.TH Map 3adt "August 2021" "University of Oregon" ADTs
+.SH NAME
+Map ADT man page
+.SH SYNOPSIS
+#include "ADTs/map.h"
+.sp
+.ce 2
+<YOU MUST INVOKE AN IMPLEMENTATION-SPECIFIC CONSTRUCTOR>
+See HashMap(3adt) and LListMap(3adt)
+.sp
+The following assumes that you have called one of the implementation-specific
+constructors and stored the pointer to the map instance in
+.br
+.ce 1
+const Map *m;
+.sp
+const Map *m->create(m);
+.sp
+void m->destroy(m);
+.sp
+void m->clear(m);
+.sp
+bool m->containsKey(m, void *key);
+.sp
+bool m->get(m, void *key, void **value);
+.sp
+bool m->put(m, void *key, void *value);
+.sp
+bool m->putUnique(m, void *key, void *value);
+.sp
+bool m->remove(m, void *key);
+.sp
+bool m->isEmpty(m);
+.sp
+long m->size(m);
+.sp
+void **m->keyArray(m, long *len);
+.sp
+MEntry **m->entryArray(m, long *len);
+.sp
+const Iterator *m->itCreate(m);
+.SH DESCRIPTION
+The create() method creates a new map using the same implementation and
+`freeV' and `freeK' pointers as the
+map upon which the method has been invoked;
+returns NULL if error creating the new map.
+.sp
+The destroy() method destroys the map.
+It applies the constructor-specified freeK() and freeV() to each element
+in the map before returning heap storage associated with the
+Map instance to the heap.
+.sp
+The clear() method clears all elements from the map.
+It applies the constructor-specified freeK() and freeV() to each element
+in the map.
+Upon return, the map is empty.
+.sp
+The containsKey() method returns true if `key' is contained in the map, false
+if not.
+.sp
+The get() method returns the value associated with `key' in `*value'.
+The method return value is true if `key' is in the map, false if not.
+.sp
+The put() method puts (`key',`value') into the map;
+applies constructor-specified freeK() and freeV() if there was a previous
+entry associated with `key'.
+The method return value is true if successful, false if not.
+.sp
+The putUnique() method puts (`key',`value') into the map if and only if the map
+does not already have an entry associated with `key'.
+The method return value is true if successful, false if not.
+.sp
+The remove() method removes (`key',`value') from the map;
+applies constructor-specified freeK() and freeV() to the removed entry.
+The method return value is true if present and removed, false if not present.
+.sp
+The isEmpty() method returns true if the array list is empty, false if not.
+.sp
+The size() method returns the number of elements in the array list.
+.sp
+The keyArray() method returns a heap-allocated array containing the
+keys in the map; the order of the keys in the array is arbitrary;
+it returns the number of elements in the array
+in `*len'.
+The method return value is a pointer to an array of void * elements, or NULL
+if malloc failure OR IF THE MAP IS EMPTY.
+.br
+N.B. The caller is responsible for freeing the array of void * elements when
+finished with it.
+.sp
+The entryArray() method returns a heap-allocated array containing the
+(key,value) entries in the map; the order of the entries in the array is
+arbitrary;
+it returns the number of entries in the array in `*len'.
+The method return value is a pointer to an array of MEntry * elements, or NULL
+if malloc failure OR IF THE MAP IS EMPTY.
+.br
+N.B. The caller is responsible for freeing the array of MEntry * elements when
+finished with it.
+.sp
+The itCreate() method creates an Iterator to the entries in the map.
+The order in which the entries are returned by Iterator.next() is arbitrary.
+The method return value is a pointer to the Iterator so created, or NULL
+if malloc failure OR IF THE MAP IS EMPTY.
+.br
+N.B. The caller is responsible for destroying the iterator when finished with
+it.
+.SH FILES
+/usr/local/include/ADTs/map.h
+.br
+/usr/local/lib/libADTs.a
+.SH AUTHOR
+Joe Sventek <jsventek@gmail.com>
+.SH "SEE ALSO"
+Intro(3adt), HashMap(3adt), LListMap(3adt), Iterator(3adt)

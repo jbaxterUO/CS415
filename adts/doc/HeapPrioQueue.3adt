@@ -1,0 +1,122 @@
+.\" Process this file with
+.\" groff -man -Tascii HeapPrioQueue.3adt
+.\"
+.TH HeapPrioQueue 3adt "August 2021" "University of Oregon" ADTs
+.SH NAME
+HeapPrioQueue ADT man page
+.SH SYNOPSIS
+#include "ADTs/heapprioqueue.h"
+.sp
+const PrioQueue *pq = HeapPrioQueue(int (*cmp)(void*,void*),
+.br
+                                    void (*freePrio)(void *p),
+.br
+                                    void (*freeValue)(void *v));
+.sp
+const PrioQueue *pq = PrioQueue_create(int (*cmp)(void*,void*),
+.br
+                                       void (*freePrio)(void *p),
+.br
+                                       void (*freeValue)(void *v));
+.sp
+const PrioQueue *pq->create(pq);
+.sp
+void pq->destroy(pq);
+.sp
+void pq->clear(pq);
+.sp
+bool pq->insert(pq, void *priority, void *value);
+.sp
+bool pq->min(pq, void **priority, void **value);
+.sp
+bool pq->removeMin(pq, void **priority, void **value);
+.sp
+bool pq->isEmpty(pq);
+.sp
+long pq->size(pq);
+.sp
+void **pq->toArray(pq, long *len);
+.sp
+const Iterator *pq->itCreate(pq);
+.SH DESCRIPTION
+HeapPrioQueue() creates a heap-based priority queue;
+`cmp' is a function pointer to a comparator function between two priorities;
+`freePrio', if non-NULL, is a function pointer that will be called by
+destroy() and clear() for the priority of each entry in the PrioQueue
+before performing its function;
+`freeValue' is a function pointer that will be called by
+destroy() and clear() on each entry in the stack.
+If you are storing basic data types in the HeapPrioQueue, you should
+specify `doNothing'; if you are storing pointers to heap-allocated values
+created using `malloc()' or `strdup()', you should specify free; if the values
+you are storing have more complicated relationships to the heap, you should
+specify the name of a function you have created to return the heap allocations
+associated with a value in the HeapPrioQueue.
+Returns a pointer to the dispatch table, or NULL if there are malloc() errors.
+.sp
+PrioQueue_create() creates a priority queue;
+`cmp' is a function pointer to a comparator function between two priorities;
+`freePrio', if non-NULL, is a function pointer that will be called by
+destroy() and clear() for the priority of each entry in the PrioQueue
+before performing its function;
+`freeValue', is as described above for `HeapPrioQueue()'.
+Returns a pointer to the dispatch table, or NULL if there are malloc() errors.
+.sp
+The create() method creates a new priority queue using the same implementation
+and `freeValue' function pointer
+as `pq'; returns NULL if error creating the new priority queue.
+.sp
+The destroy() method destroys the priority queue.
+It applies the constructor-specified freePrio() and freeValue() to each element
+in the priority queue before returning heap storage associated with the
+PrioQueue instance to the heap.
+.sp
+The clear() method clears all elements from the priority queue.
+It applies the constructor-specified freePrio() and freeValue() to each element
+in the priority queue.
+Upon return, the priority queue is empty.
+.sp
+The insert() method inserts `value' into the appropriate place in the priority
+queue based upon `priority'.
+if no more room in the
+priority queue, it is dynamically resized.
+The method return value is true/1 if successful, false/0 if malloc() error.
+.sp
+The min() method copies the priority and value of the minimum element into
+`*priority' and `*value', respectively,
+without removing the element from the priority queue.
+The method return value is true/1 if successful, false/0 if the priority queue was empty.
+.sp
+The removeMin() method removes the minimum element from the priority queue,
+copying the priority and value of the minimum element into
+`*priority' and `*value', respectively.
+The method return value is true/1 if successful, false/0 if the priority queue was empty.
+.sp
+The isEmpty() method returns true/1 if the priority queue is empty, false/0 if not.
+.sp
+The size() method returns the number of elements in the priority queue.
+.sp
+The toArray() method returns a heap-allocated array containing the
+values in the priority queue in priority order;
+it returns the number of elements in the array in `*len'.
+The method return value is a pointer to an array of void * elements, or NULL
+if malloc failure OR IF THE PRIORITY QUEUE IS EMPTY.
+.br
+N.B. The caller is responsible for freeing the array of void * elements when
+finished with it.
+.sp
+The itCreate() method creates an Iterator to the values in the priority queue.
+The iterator returns the priority queue elements in priority order.
+The method return value is a pointer to the Iterator so created, or NULL
+if malloc failure OR IF THE PRIORITY QUEUE IS EMPTY.
+.br
+N.B. The caller is responsible for destroying the iterator when finished with
+it.
+.SH FILES
+/usr/local/include/ADTs/heapprioqueue.h, /usr/local/include/ADTs/prioqueue.h
+.br
+/usr/local/lib/libADTs.a
+.SH AUTHOR
+Joe Sventek <jsventek@gmail.com>
+.SH "SEE ALSO"
+Intro(3adt), PrioQueue(3adt), LListPrioQueue(3adt), Iterator(3adt)

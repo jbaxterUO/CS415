@@ -1,0 +1,126 @@
+.\" Process this file with
+.\" groff -man -Tascii LListDeque.3adt
+.\"
+.TH LListDeque 3adt "August 2021" "University of Oregon" ADTs
+.SH NAME
+LListDeque ADT man page
+.SH SYNOPSIS
+#include "ADTs/llistdeque.h"
+.sp
+const Deque *d = LListDeque(void (*freeValue)(void *e));
+.sp
+const Deque *d = Deque_create(void (*freeValue)(void *e));
+.sp
+const Deque *d->create(d);
+.sp
+void d->destroy(d);
+.sp
+void d->clear(d);
+.sp
+bool d->insertFirst(d, void *element);
+.sp
+bool d->insertLast(d, void *element);
+.sp
+bool d->first(d, void **element);
+.sp
+bool d->last(d, void **element);
+.sp
+bool d->removeFirst(d, void **element);
+.sp
+bool d->removeLast(d, void **element);
+.sp
+bool d->isEmpty(d);
+.sp
+long d->size(d);
+.sp
+void **d->toArray(d, long *len);
+.sp
+const Iterator *d->itCreate(d);
+.SH DESCRIPTION
+LListDeque() creates a linked-list-based deque.
+`freeValue' is a function pointer that will be called by
+destroy() and clear() on each entry in the stack.
+If you are storing basic data types in the LListDeque, you should
+specify `doNothing'; if you are storing pointers to heap-allocated values
+created using `malloc()' or `strdup()', you should specify free; if the values
+you are storing have more complicated relationships to the heap, you should
+specify the name of a function you have created to return the heap allocations
+associated with a value in the LListDeque.
+Returns a pointer to the dispatch table, or NULL if there are malloc() errors.
+.sp
+Deque_create() creates a deque;
+`freeValue' is as for `LListDeque()' described above.
+Returns a pointer to the dispatch table, or NULL if there are malloc() errors.
+.sp
+The create() method creates a new deque using the same implementation and
+`freeValue' function pointer as
+`d'; returns NULL if error creating the new deque.
+.sp
+The destroy() method destroys the deque.
+It applies the constructor-specified freeValue() to each element
+in the deque before returning heap storage associated with the
+Deque instance to the heap.
+.sp
+The clear() method clears all elements from the deque.
+It applies the constructor-specified freeValue() to each element
+in the deque.
+Upon return, the deque is empty.
+.sp
+The insertFirst() method inserts `element' at the head of the deque;
+if no more room in the
+deque, it is dynamically resized.
+The method return value is true/1 if successful, false/0 if malloc() error.
+.sp
+The insertLast() method inserts `element' at the tail of the deque;
+if no more room in the
+deque, it is dynamically resized.
+The method return value is true/1 if successful, false/0 if malloc() error.
+.sp
+The first() method copies the element at the head of the deque into `*element'
+without removing the element from the deque.
+The method return value is true/1 if successful, false/0 if the deque was empty.
+.sp
+The last() method copies the element at the head of the deque into `*element'
+without removing the element from the deque.
+The method return value is true/1 if successful, false/0 if the deque was empty.
+.sp
+The removeFirst() method removes the element at the head of the deque,
+copying it into
+.br
+`*element'.
+The method return value is true/1 if successful, false/0 if the deque was empty.
+.sp
+The removeLast() method removes the element at the tail of the deque,
+copying it into
+.br
+`*element'.
+The method return value is true/1 if successful, false/0 if the deque was empty.
+.sp
+The isEmpty() method returns true/1 if the deque is empty, false/0 if not.
+.sp
+The size() method returns the number of elements in the deque.
+.sp
+The toArray() method returns a heap-allocated array containing the
+elements in the deque in the order head to tail;
+it returns the number of elements in the array in `*len'.
+The method return value is a pointer to an array of void * elements, or NULL
+if malloc failure OR IF THE DEQUE IS EMPTY.
+.br
+N.B. The caller is responsible for freeing the array of void * elements when
+finished with it.
+.sp
+The itCreate() method creates an Iterator to the contents of the deque.
+The iterator returns the deque elements in the order head to tail.
+The method return value is a pointer to the Iterator so created, or NULL
+if malloc failure OR IF THE DEQUE IS EMPTY.
+.br
+N.B. The caller is responsible for destroying the iterator when finished with
+it.
+.SH FILES
+/usr/local/include/ADTs/llistdeque.h, /usr/local/include/deque.h
+.br
+/usr/local/lib/libADTs.a
+.SH AUTHOR
+Joe Sventek <jsventek@gmail.com>
+.SH "SEE ALSO"
+Intro(3adt), Deque(3adt), ArrayDeque(3adt), Iterator(3adt)

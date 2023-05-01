@@ -1,0 +1,11 @@
+/home/me/share/project1/cpubound -m 1 -n cpu1
+/home/me/share/project1/cpubound -m 1 -n cpu2
+
+
+
+/usr/bin/sleep 4s
+/usr/bin/sleep 6s
+/usr/bin/sleep 8s
+/usr/bin/echo  3s
+/usr/bin/echo fourth
+

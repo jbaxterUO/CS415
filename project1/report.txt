@@ -1,0 +1,9 @@
+Name: Jesse Baxter
+UOID: 951927077
+
+Project Status:
+Version 1, 2, 3 appear to work with no errors or leaks from the tests I attempted to write myself.
+Version 4 I did not have enough time to work out a good display system, it compiles and shows the first row of the table but needed more time.
+
+Help:
+I read others questions in discord/slack and listened in during office hours but no one in particular really gave me any specific advice. 

@@ -1,0 +1,2 @@
+/home/me/share/project1/cpubound -m 1 -n cpu1
+/home/me/share/project1/cpubound -m 1 -n cpu2

@@ -47,7 +47,9 @@ int main(int argc, char **argv) {
    (void)alarm((unsigned int) 60 * minutes);
    while (! ALRM_seen) {
       for (i = 0; i < 300000000; i++) {
-         ;
+         if(i % 300000000 == 0) {
+            printf("%s: %d\n", name, ALRM_seen);
+         }
       }
    }
    return EXIT_SUCCESS;
